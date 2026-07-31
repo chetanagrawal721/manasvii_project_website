@@ -659,6 +659,7 @@
   overflow: hidden;
 }
 
+
 .polaroid-caption {
   font-family: var(--font-hand);
   font-size: var(--text-lg);
@@ -981,6 +982,9 @@
   opacity: 0;
   animation: scrapbookFadeIn 0.8s ease forwards;
   animation-fill-mode: both;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .scrapbook-photo:hover {
@@ -1047,14 +1051,42 @@
   z-index: 5;
 }
 
+/* Scrapbook caption and note styles */
 .scrapbook-caption-preview {
-  position: absolute;
-  bottom: 12px;
-  width: 100%;
-  text-align: center;
   font-family: var(--font-hand);
-  font-size: 20px;
+  font-size: 22px;
   color: var(--text-dark);
+  text-align: center;
+  margin-top: var(--sp-2);
+  display: block;
+}
+
+.scrapbook-photo-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--sp-3);
+  padding: 0 var(--sp-2);
+  max-width: 220px;
+}
+
+.frame-polaroid ~ .scrapbook-photo-text,
+.frame-vintage ~ .scrapbook-photo-text {
+  max-width: 210px;
+}
+
+.scrapbook-note-preview {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #665b5b;
+  text-align: center;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  width: 100%;
 }
 
 /* Modal Styling */
@@ -1896,129 +1928,62 @@
    RESPONSIVE — MOBILE FIRST
    ════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .passcode-screen {
-    flex-direction: column;
-  }
-  .passcode-left {
-    flex: 0 0 160px;
-    width: 100%;
-    border-right: none;
-    border-bottom: 3px dashed rgba(178, 58, 58, 0.15);
-  }
-  .mascot-frame-outer {
-    width: 110px;
-    height: 120px;
-  }
-  .mascot-frame-inner {
-    width: 95px;
-    height: 105px;
-  }
-  .frame-ribbon-bow {
-    top: -15px;
-    width: 50px;
-  }
-  .passcode-right {
-    padding: var(--sp-6);
-  }
-  .hub-items {
-    flex-direction: column;
-    gap: var(--sp-6);
-  }
-  .letter-content {
-    flex-direction: column;
-    gap: var(--sp-6);
-  }
-  .letter-right {
-    flex-direction: row;
-    justify-content: center;
-    width: 100%;
-  }
-  .jar-scene {
-    flex-direction: column;
-    gap: var(--sp-6);
-  }
-  .jar-left {
-    justify-content: center;
-  }
-  .theme-nav-btn {
-    top: auto;
-    bottom: 15px;
-    transform: none;
-    flex-direction: row;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 4px 10px 4px 4px;
-    border-radius: var(--radius-full);
-    box-shadow: 0 4px 12px rgba(178,58,58,0.2);
-    border: 1px solid var(--accent-pink);
-  }
-  .theme-nav-left {
-    left: 10px;
-  }
-  .theme-nav-right {
-    right: 10px;
-    flex-direction: row-reverse;
-    padding: 4px 4px 4px 10px;
-  }
-  .theme-nav-icon {
-    width: 44px;
-    height: 44px;
-    box-shadow: none;
-    border: none;
-    background: transparent;
-  }
-  .theme-nav-label {
-    opacity: 1;
-    transform: translateY(0);
-    position: static;
-    background: transparent;
-    padding: 0;
-    pointer-events: auto;
-    font-size: 0.9rem;
-  }
-  .theme-nav-btn:hover {
-    transform: none;
-  }
-  .music-card {
-    padding: var(--sp-3);
-    max-width: 95vw;
-  }
-  .music-video-area {
-    aspect-ratio: 4/4; /* Square but slightly smaller */
-  }
-  .music-big-title {
-    font-size: var(--text-xl);
-  }
-  .award-card {
-    padding: var(--sp-6) var(--sp-4);
-    max-width: 90vw;
-  }
-  .award-name {
-    font-size: var(--text-3xl);
-  }
-  .scrapbook-board {
-    padding: 100px 16px 80px;
-    gap: var(--sp-5);
-  }
-  .scrapbook-photo {
-    transform: none !important;
-  }
-  .frame-polaroid img {
-    width: 140px;
-    height: 160px;
-  }
-  .frame-vintage img {
-    width: 160px;
-    height: 120px;
-  }
-  .frame-film img {
-    width: 170px;
-    height: 110px;
-  }
-  .scrapbook-title {
-    font-size: var(--text-3xl);
-  }
-  .memory-modal-content {
-    padding: 16px;
-    max-width: 95vw;
-  }
+  /* Passcode */
+  .passcode-screen { flex-direction: column; }
+  .passcode-left { flex: 0 0 160px; width: 100%; border-right: none; border-bottom: 3px dashed rgba(178, 58, 58, 0.15); }
+  .mascot-frame-outer { width: 110px; height: 120px; }
+  .mascot-frame-inner { width: 95px; height: 105px; }
+  .frame-ribbon-bow { top: -15px; width: 50px; }
+  .passcode-right { padding: var(--sp-6); }
+  
+  /* Hub */
+  .hub-items { flex-direction: column; gap: var(--sp-6); }
+  
+  /* Letter */
+  .letter-content { flex-direction: column; gap: var(--sp-8); margin-top: var(--sp-4); }
+  .letter-left { width: 100%; flex: unset; }
+  .letter-right { width: 100%; flex: unset; justify-content: center; transform: scale(0.9); transform-origin: top center; margin-top: -20px; }
+  .notebook-paper { min-height: 250px; padding: var(--sp-6) var(--sp-4) var(--sp-6) 48px; }
+  .notebook-paper::before { left: 24px; }
+  .letter-text-block { font-size: 20px; line-height: 28px; }
+  
+  /* Jar */
+  .jar-scene { flex-direction: column; gap: var(--sp-6); }
+  .jar-left { justify-content: center; transform: scale(0.9); }
+  
+  /* Theme Nav Buttons */
+  .theme-nav-btn { top: auto; bottom: 15px; transform: none; flex-direction: row; background: rgba(255, 255, 255, 0.95); padding: 4px 10px 4px 4px; border-radius: var(--radius-full); box-shadow: 0 4px 12px rgba(178,58,58,0.2); border: 1px solid var(--accent-pink); }
+  .theme-nav-left { left: 10px; }
+  .theme-nav-right { right: 10px; flex-direction: row-reverse; padding: 4px 4px 4px 10px; }
+  .theme-nav-icon { width: 44px; height: 44px; box-shadow: none; border: none; background: transparent; }
+  .theme-nav-label { opacity: 1; transform: translateY(0); position: static; background: transparent; padding: 0; pointer-events: auto; font-size: 0.9rem; }
+  .theme-nav-btn:hover { transform: none; }
+  
+  /* Music */
+  .music-card { padding: var(--sp-3); max-width: 95vw; }
+  .music-video-area { aspect-ratio: 1; }
+  .music-big-title { font-size: var(--text-xl); }
+  
+  /* Award Certificate */
+  .award-scroll-area { padding: 40px 10px 60px; }
+  .award-certificate { padding: 24px 20px; max-width: 95vw; gap: var(--sp-2); }
+  .cert-header { transform: scale(0.85); transform-origin: center top; margin-bottom: -10px; }
+  .cert-title { font-size: 1.8rem; letter-spacing: 1px; line-height: 1.2; }
+  .cert-presented { font-size: 14px; }
+  .cert-name-text { font-size: 24px; }
+  .cert-message { font-size: 14px; line-height: 1.6; padding: 0 5px; }
+  .cert-medal-circle { transform: scale(0.8); }
+  .cert-medal-wrap { height: 110px; }
+  .award-bottom-quote { font-size: 20px; padding: 0 16px; }
+  
+  /* Scrapbook Photos Grid */
+  .scrapbook-board { padding: 80px 16px 80px; gap: var(--sp-8); }
+  .scrapbook-photo { transform: none !important; width: 100%; max-width: 320px; }
+  .frame-polaroid img { width: 100%; height: auto; aspect-ratio: 1; }
+  .frame-vintage img { width: 100%; height: auto; aspect-ratio: 4/3; }
+  .frame-film img { width: 100%; height: auto; aspect-ratio: 3/2; }
+  .scrapbook-title { font-size: var(--text-3xl); padding: 0 20px; }
+  .scrapbook-caption-preview { font-size: var(--text-xl); margin-top: 4px; }
+  .scrapbook-note-preview { font-size: var(--text-sm); -webkit-line-clamp: 4; margin-top: 2px; }
+  .memory-modal-content { padding: 16px; max-width: 95vw; }
 }

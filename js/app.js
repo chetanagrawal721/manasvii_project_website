@@ -798,13 +798,25 @@ function renderPhotos() {
       frame.appendChild(fallbackContainer.firstChild);
     }
 
-    // Add short caption to polaroids
-    if (frameClass === 'frame-polaroid') {
+    // Add caption and note below all photo frames to fill the empty space
+    const textContainer = document.createElement('div');
+    textContainer.className = 'scrapbook-photo-text';
+    
+    if (photo.caption) {
       const cap = document.createElement('div');
       cap.className = 'scrapbook-caption-preview';
-      cap.textContent = photo.caption || '';
-      frame.appendChild(cap);
+      cap.textContent = photo.caption;
+      textContainer.appendChild(cap);
     }
+    
+    if (photo.note) {
+      const noteEl = document.createElement('div');
+      noteEl.className = 'scrapbook-note-preview';
+      noteEl.textContent = photo.note;
+      textContainer.appendChild(noteEl);
+    }
+    
+    frame.appendChild(textContainer);
 
     // Click interaction for modal
     frame.addEventListener('click', () => {

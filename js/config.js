@@ -59,7 +59,7 @@ const CONFIG = {
       alt: "Silly moment",
       caption: "Always making me laugh",
       date: "August 2, 2025",
-      note: "You have the most beautiful smile in the entire world.",
+      note: "You have the most beautiful smile in the entire world. Seeing you happy is my favorite thing, and I'll always try my best to keep that smile on your face.",
       frameType: "vintage",
       rotation: 4
     },
@@ -68,7 +68,7 @@ const CONFIG = {
       alt: "Beautiful memory",
       caption: "You & Me ❤️",
       date: "October 18, 2025",
-      note: "I knew right then that I wanted to spend every moment with you.",
+      note: "I knew right then that I wanted to spend every moment with you. You make every place feel like home.",
       frameType: "polaroid",
       rotation: -5
     },
@@ -77,7 +77,7 @@ const CONFIG = {
       alt: "Recent adventure",
       caption: "My favorite person",
       date: "December 31, 2025",
-      note: "Cheers to this beautiful life with you. I love you endlessly.",
+      note: "Cheers to this beautiful life with you. I love you endlessly, and I can't wait to make a million more memories by your side.",
       frameType: "film",
       rotation: 2
     }
