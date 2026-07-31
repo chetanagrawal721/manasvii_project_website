@@ -1,0 +1,1498 @@
+Romantic Interactive Website — Step-by-Step Build Playbook
+
+Reference source: Video-33235.mp4  (39s, portrait capture of a phone screen recording of a
+Canva-site style interactive romantic web experience — domain shown on-screen:
+templatediaryy.my.canva.site )
+
+How to use this document: Build the site in the exact order below. Each Step contains a
+
+Build Instructions block (no code — describes what to construct, how it behaves, and why)
+
+and a ✅ Checkpoint block. Do not move to the next Step until every item in the
+
+Checkpoint passes. This turns the build into a self-verifying pipeline so a developer (or QA
+
+reviewer) can conﬁrm progress objectively at every stage instead of discovering problems
+
+at the end.
+
+Where the reference video does not show something with 100% clarity (e.g., exact hex
+
+codes, exact millisecond timings, exact sound effects), this is explicitly marked "Estimated
+
+Implementation" — build it as reasonably close as possible to what is described, but do not
+
+treat the number as ground truth pulled from the video.
+
+0. High-Level Summary of What You're Building
+
+A single-page, scroll-free, click-through interactive romantic reveal website designed to
+be sent as a personal gift/link (a "digital love letter" experience). It is built card-by-card /
+scene-by-scene rather than as a long scrolling page — each interaction reveals the next
+
+scene, similar to a slideshow with an unlock gate at the front door.
+
+Full scene order conﬁrmed from the reference video:
+
+1.  Lock Screen — "Enter a passcode" keypad
+
+2.  Wrong Passcode error state (shake/prompt to retry)
+
+3.  Successful unlock transition
+
+4.  "Surprise Awaiting <3" teaser screen
+
+5.  "Click on items to open" — Scene A (gift box + heart-shaped collage of mini icons)
+
+6.  Love letter scene (handwritten-style paragraph over ﬂoral background)
+
+7.  "Everything I Love About You" — heart jar / reasons list scene
+
+8.  "Click on items to open" — Scene B (second heart collage, repeated pattern with a
+
+couple illustration cameo)
+
+9.  Embedded music/video scene — YouTube-style lyric video ("Until I Found You" —
+
+Stephen Sanchez ft. Em Beihold)
+
+10.  Now-playing lyric card with mini audio player controls (loop icon, prev/play/next,
+
+timestamp scrubber)
+
+11.  Photo memory grid scene — "Here's a little reminder of how pretty you are <3" (4-
+
+photo strip with heart icon header)
+
+12.  "Click on items to open" — Scene C (repeats gift/heart collage, leads to ﬁnal reveal)
+
+13.  Final certiﬁcate scene — "BEST GIRLFRIEND AWARD" personalized card with
+
+recipient name and message
+
+14.  (Video ends here; site likely continues/loops or ends on this card — Estimated
+
+Implementation for anything beyond this point)
+
+Design language: Cottagecore / scrapbook / soft pastel romantic aesthetic. Hand-drawn
+
+doodle icons, plaid/gingham backgrounds, serif script headline fonts mixed with a soft
+
+rounded sans-serif body font, pastel pink + sage green + cream color palette, paper/sticker-
+
+collage motifs (washi-tape style borders, "CUTE" signpost sticker, ﬂoating
+
+hearts/stars/butterﬂies).
+
+STEP 0 — Project Setup & Foundations
+
+Build Instructions
+
+Set up a single-page project (static site or single-page app). Because the whole
+
+experience is scene-based, not URL-routed, treat each "scene" as a full-viewport
+
+container that shows/hides rather than a separate page.
+
+Deﬁne a global "scene manager" concept: only one scene is visible at a time; all others
+
+are mounted but hidden (or lazily rendered) so transitions can crossfade instead of
+hard-cutting.
+
+Set the base canvas to a ﬁxed content stage that is centered on screen with
+letterboxing on very wide screens (the reference video shows the whole experience
+living inside a bordered "frame," like a card ﬂoating on a neutral backdrop —
+Estimated Implementation: this may just be an artifact of the phone recording rather
+than an intentional in-site frame; assume a normal full-bleed responsive layout unless
+told otherwise).
+
+Establish font loading, color tokens, spacing tokens, and icon/doodle asset folders
+before building any scene (see Design System step below, Step 1).
+
+Decide on tech approach for "clickable items" interactions (Step 5 onward): each item
+should be an independently tappable hotspot, not one giant image.
+
+✅ Checkpoint — Step 0
+
+ Project scaffold runs locally / previews in browser with a blank canvas.
+
+ A scene-switching mechanism exists and can toggle between at least 2 dummy
+
+placeholder scenes.
+
+ Base responsive canvas is centered and scales down gracefully at mobile widths (test at
+
+1440px, 768px, 390px).
+
+ Folder structure for assets (fonts, icons, images, audio) exists (see Step 16 for full
+
+structure).
+
+ No console errors on load.
+
+STEP 1 — Design System First (Colors, Type, Spacing, Icons)
+
+Build the design system before any real scene, so every subsequent screen pulls from the
+
+same tokens instead of one-off styling.
+
+Build Instructions
+
+Color palette (sampled from video, treat exact hex as Estimated Implementation):
+
+Token
+
+Approx Color
+
+Where used
+
+bg-cream
+
+bg-blush
+
+bg-sage
+
+Warm off-white (
+
+#FBF7F0 -ish)
+
+Card backgrounds, letter scenes
+
+Soft pink (
+
+#F7D9DD -ish)
+
+Passcode panel, surprise screens
+
+Muted sage/olive green (
+
+Passcode screen left panel (gingham)
+
+#DCE3C4 -ish)
+
+accent-red Warm red/maroon (
+ish)
+
+#B23A3A -
+
+Headline script text, "Wrong Passcode," CTA
+
+buttons
+
+accent-
+
+pink
+
+Bright bubblegum pink (
+
+Gift box ribbon, hearts
+
+#F2A6C4 -ish)
+
+text-dark
+
+Deep brown/black (
+
+#3A2E2E -
+
+Body copy, handwritten letter text
+
+ish)
+
+text-muted
+
+Soft rose-grey
+
+Secondary labels
+
+Typography: use one script/serif display font for romantic headlines ("Enter a
+passcode," "Everything I Love About You," "BEST GIRLFRIEND AWARD") and one
+
+handwriting-style font for the love-letter body text, plus a rounded sans-serif for UI
+
+labels/buttons. (Estimated Implementation for exact font families — visually
+consistent with Google Fonts like "Playfair Display"/"Alex Brush" for script and
+
+"Quicksand"/"Poppins" for UI, and a handwriting font like "Caveat" or "Homemade
+Apple" for the letter.)
+
+Spacing scale: deﬁne small/medium/large paddings (e.g., 8/16/24/32/48px) — every
+scene in the video uses generous whitespace and centered compositions.
+
+Icon/doodle style: ﬂat, hand-drawn outline illustrations (the chick/bird mascot
+
+character, hearts, stars, butterﬂies, a signpost reading "CUTE"). Source or commission
+a consistent doodle icon set — mixing icon styles will break the aesthetic.
+
+Border radius: soft/large rounding on all buttons and cards (pill-shaped buttons,
+rounded card corners).
+
+Background pattern: gingham/plaid check pattern used behind the passcode and
+
+"click to open" scenes; solid pastel/paper-texture background used behind letter and
+gallery scenes.
+
+✅ Checkpoint — Step 1
+
+ A documented color token ﬁle/style guide exists with all colors above named and
+
+reusable.
+
+ All three font roles (script headline, handwriting body, UI sans-serif) are loading
+
+correctly and render in a sample page.
+
+ Spacing scale is deﬁned as reusable tokens (not hardcoded pixel values scattered
+
+through code).
+
+ At least the mascot chick character and 5 doodle icons (heart, star, butterﬂy, cassette
+
+tape, camera) are sourced/created in a consistent style.
+
+ Gingham/plaid background pattern asset is created and tileable without visible seams.
+
+ Buttons/cards preview with correct rounded corners and pastel shadows.
+
+STEP 2 — Build Scene 1: Passcode Lock Screen (First Screen Visitor Sees)
+
+This is the very ﬁrst scene the user lands on. No loading splash was visible in the reference
+
+video before this screen — the site opens directly on the passcode gate. (Estimated
+Implementation: a brief branded loading ﬂash may exist before this but was not visibly
+
+captured; if you add one, keep it under 1 second and non-blocking.)
+
+Build Instructions
+
+Layout: Split screen, two vertical halves.
+
+Left half: sage-green gingham/plaid background with pink hearts and stars
+
+scattered as decoration, and a centered oval-framed illustration of the mascot
+chick holding a small ﬂower bouquet, itself ringed by a heart-pattern border.
+
+Right half: solid blush-pink background containing the interactive passcode UI.
+
+Right-half content, top to bottom, centered:
+
+1.  Label text: "Enter a passcode" (rounded sans-serif, dark maroon/brown color,
+
+medium weight).
+
+2.  A row of 4 empty square input boxes (rounded corners, white ﬁll, thin border)
+
+representing the 4 digits of the code. Boxes are empty/blank at rest.
+
+3.  Below that, a numeric keypad arranged in the standard phone-dial layout: 1–2–3
+/ 4–5–6 / 7–8–9 / *–0–#. Each key is a white circular button with a dark maroon
+
+numeral, sitting on the pink background.
+
+Input behavior:
+
+Tapping a digit key ﬁlls the next empty box left-to-right with a small ﬁlled
+
+marker/icon (in the video, the ﬁlled state shows a small ﬂower/asterisk-style
+glyph inside the box rather than the literal digit — use a decorative "ﬁlled" glyph,
+
+not the plaintext digit, for a bit of light security/privacy plus thematic
+
+consistency).
+
+Boxes ﬁll one at a time as each key is tapped; there is no visible backspace key
+
+shown, but you should still implement one for usability (Estimated
+
+Implementation — add a working backspace/clear affordance even though not
+
+explicitly seen).
+
+Once all 4 boxes are ﬁlled, the code is auto-submitted (no explicit "Enter" button
+
+was shown).
+
+Two outcomes after the 4th digit:
+
+Wrong code → go to Step 3 (Wrong Passcode state).
+
+Correct code → go to Step 4 (Unlock transition).
+
+Keep the browser-chrome / URL bar shown in the recording
+( templatediaryy.my.canva.site ) in mind only as evidence of the platform used to
+prototype this — do not build actual browser chrome into your site.
+
+✅ Checkpoint — Step 2
+
+ Split-screen layout renders correctly with correct proportions on desktop and mobile
+
+(stack vertically on narrow mobile if needed — see Step 17).
+
+ Mascot illustration + oval frame + heart border renders on the left panel, decorative
+
+stars/hearts scattered convincingly (not overlapping the illustration or text).
+
+ "Enter a passcode" label displays correctly styled.
+
+ 4 input boxes render empty by default, all same size, evenly spaced.
+
+ Keypad renders 12 keys in correct telephone-style order (1-9, *, 0, #) with consistent
+
+circular styling.
+
+ Tapping a key visually ﬁlls the next empty box with a marker glyph (not the raw digit).
+
+ After 4 digits entered, system automatically evaluates the code (no manual submit
+
+needed).
+
+ A working (even if visually hidden) backspace/reset exists so a mis-tap doesn't lock the
+
+user out of correcting themselves.
+
+ Correct-code path and wrong-code path are both wired to route to two different next
+
+scenes.
+
+STEP 3 — Build Scene 1b: Wrong Passcode State
+
+Build Instructions
+
+On incorrect code entry, transition the right-hand passcode panel content out and
+swap the entire visible content area to a full-bleed light pink/lavender background
+
+covered in a soft sparkle/glitter texture (small white star and sparkle particles
+scattered across the background — decorative, non-interactive).
+
+Center-stage: the mascot chick character reacts with a surprised/upset expression
+(eyes wide, holding a small item, mouth in a ﬂat "oops" line).
+
+Above the mascot: bold, arched/curved headline text reading "WRONG PASSCODE!"
+
+in the deep red/maroon accent color, hand-lettered marker style, laid out on a slight
+upward arc.
+
+Note: the video shows this text animating in progressively (letters/word appear
+
+to build up over a few frames — "WRO" → "WRONG PA" → "WRONG PASSCOD"
+→ "WRONG PASSCODE!") — build this as a typewriter/letter-by-letter reveal
+
+animation, not a static instant-appear text.
+
+Below the mascot: a pill-shaped red "TRY AGAIN" button with a thin white
+
+dashed/stitched border detail (giving it a sticker-like cutout look), white bold
+uppercase label text.
+
+Tapping "TRY AGAIN" clears the 4 input boxes and returns the user to the Step 2
+
+passcode screen, ready for a fresh attempt, with the digit boxes reset to empty.
+
+Do not lock the user out after repeated wrong attempts (no lockout/cooldown was
+shown) — keep retries unlimited unless you have a speciﬁc reason to change that.
+
+✅ Checkpoint — Step 3
+
+ Wrong-code entry reliably triggers this scene (test multiple wrong codes).
+
+ Background swaps to sparkle-textured pastel background distinct from the passcode
+
+screen.
+
+ Mascot displays a distinct "surprised/oops" pose different from any other scene's mascot
+
+pose.
+
+ "WRONG PASSCODE!" headline animates in progressively (letter-by-letter or word-by-
+
+word build-up), not instantly.
+
+ "TRY AGAIN" button is styled as a red pill/sticker button with legible white text.
+
+ Tapping "TRY AGAIN" clears passcode input and returns to Step 2 screen with all 4 boxes
+
+empty.
+
+ Retry ﬂow can be repeated indeﬁnitely without errors or memory leaks (test 5+
+
+consecutive wrong attempts).
+
+STEP 4 — Build Scene 1c: Correct Passcode → Unlock Transition
+
+Build Instructions
+
+When the correct 4-digit code is entered, the last box ﬁlls, and a brief "UNLOCK"
+conﬁrmation state appears — the video shows a small pill button reading "UNL..."
+(truncated as "UNLOCK") appearing near the bottom-right of the passcode panel,
+suggesting a short-lived success button/label ﬂashes before transitioning away.
+
+(Estimated Implementation for exact wording/duration — treat as a ~0.5–1s success
+conﬁrmation state before auto-advancing.)
+
+After this brief conﬁrmation, transition (crossfade or wipe) directly into the "Surprise
+
+Awaiting <3" scene (Step 5). Do not require an extra tap to proceed — the unlock
+should auto-advance.
+
+This is a critical trust moment in the experience — the transition should feel
+
+rewarding: consider a soft scale/glow pulse on the input boxes and a gentle full-screen
+crossfade rather than a hard cut.
+
+✅ Checkpoint — Step 4
+
+ Entering the correct 4-digit code (deﬁned by the site owner/gift-giver, must be
+
+conﬁgurable, not hardcoded in a way that can't be changed per recipient) triggers the
+
+unlock path, distinctly different from the wrong-code path.
+
+ A brief success/"unlock" conﬁrmation state is visible before the scene changes.
+
+ Transition to the next scene is automatic (no additional user tap required) and uses a
+
+smooth crossfade, not an abrupt cut.
+
+ Passcode value is conﬁgurable/editable by whoever is building the gift (i.e., this is treated
+
+as a CMS/conﬁg value, not hardcoded once and unchangeable).
+
+ Re-testing: reload the page, re-enter the correct code, conﬁrm the unlock path works
+
+consistently every time (no ﬂaky state).
+
+STEP 5 — Build Scene 2: "Surprise Awaiting <3" Teaser Screen
+
+Build Instructions
+
+Full-bleed pastel background (light pink/lavender, same soft sparkle-particle texture
+family as the wrong-passcode scene, but this is a positive moment, not an error —
+
+keep tone celebratory, not alarming).
+
+Center-stage mascot chick in a shy/blushing bounce pose (slightly different pose than
+Wrong Passcode scene — eyes closed happily, cheeks blushing).
+
+Curved headline text above the mascot, same letter-by-letter animated reveal
+technique as Step 3: "SURPRISE" appears ﬁrst (shorter/simpler state), then extends
+to "SURPRISE AWAITING<3" — conﬁrms the site reuses the same animated-
+headline component across scenes with different copy, so build this headline reveal as
+
+a reusable component, not a one-off.
+
+Below the mascot: a pill-shaped button matching the sticker/stitched-border style
+from Step 3, this time in a softer pink tone, labeled "SURPRISE".
+
+Tapping the button (or after an auto-delay — Estimated Implementation, video
+suggests a tap-through) advances to Step 6 (ﬁrst "Click on items to open" scene).
+
+✅ Checkpoint — Step 5
+
+ Reused animated-headline component correctly displays new copy ("SURPRISE" →
+
+"SURPRISE AWAITING<3") conﬁrming component is reusable, not hardcoded per-scene.
+
+ Mascot pose is distinct from the Wrong Passcode mascot pose (visually conﬁrm side-by-
+
+side).
+
+ Sparkle background texture is consistent in density/style with Step 3's background
+
+(shared background component).
+
+ "SURPRISE" pill button is tappable and reliably transitions to the next scene.
+
+ No dead-end: user cannot get stuck on this screen without a way forward.
+
+STEP 6 — Build Scene 3: "Click on Items to Open" — Interactive Gift Hub (First
+Occurrence)
+
+This is a hub/menu scene that appears at least 3 times across the experience (conﬁrmed in
+the video at three separate points), each time leading into a different sub-scene. Build it
+once as a reusable component that accepts a different "next destination" per item.
+
+Build Instructions
+
+Background: full-bleed pastel mint/sage gingham-check pattern, decorated with
+scattered pastel butterﬂies (top-left corner) and stars.
+
+Headline: "click on items to open" in the deep red/maroon script font, arched slightly,
+
+positioned upper-center/right.
+
+Bottom-left decorative element: a hand-drawn wooden signpost illustration with a
+hanging sign that reads "CUTE" with a small heart — pure decoration, non-
+
+interactive.
+
+Main interactive elements — two large tappable objects side-by-side, left-of-
+center:
+
+1.  Large pink heart-shaped gift box with a ribbon and bow across it (left position).
+
+This is a big single hotspot.
+
+2.  A second heart shape acting as a "shadow box" or scrapbook collage,
+
+containing 4–5 small nested doodle icon stickers arranged inside it: a cassette
+
+tape, a small red heart/rosette badge, a bouquet/ﬂower icon, and a camera icon.
+Each small icon appears to be independently tappable (they are visually
+separated stickers within the larger heart outline), not just one big hotspot —
+
+build each icon as its own hotspot leading to a different content scene.
+
+Faint cameo illustration bottom-right corner: a small illustrated couple (in the
+reference video this closely resembles a well-known movie couple's illustration style
+— do not use copyrighted character art; commission an original generic couple
+
+illustration in a similar warm, sketchy style instead).
+
+Interaction/motion: icons should have a subtle idle "breathing" animation (gentle
+scale pulse or sway) to visually invite tapping, plus a tap/press-down micro-animation
+
+(scale down slightly on touch, spring back).
+
+Navigation dots: a small horizontal dot/pagination indicator near the bottom edge of
+the screen is visible in later scenes (see Step 9 onward) — track scene position with a
+
+persistent bottom dot-indicator component starting from this scene forward, and a
+left/right chevron arrow appears at the edges of some scenes to allow manual
+back/forward paging in addition to tapping items directly. Build both the tap-driven
+navigation (tap an item → jump to its content) and the arrow-driven linear navigation
+
+(chevrons step forward/back through the scene sequence) since the video shows both
+patterns being used at different points.
+
+✅ Checkpoint — Step 6
+
+ Gingham background, butterﬂies, stars, and "CUTE" signpost all render correctly and
+
+match Step 1's asset style.
+
+ "click on items to open" headline is present, correctly styled and positioned.
+
+ Heart gift box is a single large tappable hotspot with visible affordance (cursor pointer /
+
+hover or touch feedback).
+
+ The second heart collage has multiple independent hotspots (cassette, rosette, bouquet,
+
+camera) each individually tappable, veriﬁed by clicking each icon separately and
+
+conﬁrming each leads to different content.
+
+ Idle micro-animation (breathing/pulse) is present on interactive icons.
+
+ Tap/press feedback animation works on both mouse click and touch tap.
+
+ Bottom dot-pagination indicator is present and accurately reﬂects current scene position.
+
+ Left/right chevron navigation arrows are present and functional where applicable.
+
+ This entire scene is built as one reusable component so it can be reused for Steps 9 and 12
+
+with different destination mappings, conﬁrmed by checking the component is not
+
+duplicated/copy-pasted in the codebase.
+
+STEP 7 — Build Scene 4: Love Letter Reveal
+
+Triggered by tapping the large heart gift box (or one of its icons) in Step 6.
+
+Build Instructions
+
+Background: soft cream/blush background with faint decorative ﬂorals (roses) and a
+red ribbon/heart watermark motif behind the text, kept low-opacity so it doesn't
+compete with the letter text.
+
+Headline (repeated): "click on items to open" persists at the top in the same styling as
+Step 6 — conﬁrming this scene is a sub-panel/overlay layered on top of the hub
+scene, not a fully separate page. Build it as an overlay/modal-style panel that slides or
+fades in over the hub background rather than a full scene replacement, matching this
+
+behavior.
+
+Main content: a multi-line handwritten-style personal letter, left-aligned, in the
+handwriting font, dark reddish-brown ink color. Content should be a warm, personal
+
+message (the reference shows a message about missing being physically present for a
+special day like Valentine's/an anniversary and sending love long-distance —
+Estimated Implementation for exact ﬁnal copy; this is meant to be user-editable per
+recipient, so the real deliverable is the editable text block, not ﬁxed wording).
+
+Right side, next to the letter: an illustrated bouquet of tulips, plus a small
+photo/illustration cameo of a couple in the bottom-right corner (again, use original
+artwork, not copyrighted characters).
+
+Bottom-left: the "CUTE" signpost decoration reappears, reinforcing it as a recurring
+background decorative element across this family of scenes.
+
+Navigation: a right-pointing chevron arrow (bottom-right) allows the user to move
+forward/back linearly; the item can also be dismissed to return to the Step 6 hub
+
+(Estimated Implementation for exact dismiss method — implement a clear back
+affordance regardless, such as tapping outside the panel or a back chevron).
+
+This letter content must be a CMS/conﬁg-editable ﬁeld, since the whole product is a
+personalized-gift template — treat all name/message content across the entire site
+
+(letter text, recipient name, reasons list, photos, playlist, ﬁnal award message) as data-
+driven from a single conﬁg source, not hardcoded per install.
+
+✅ Checkpoint — Step 7
+
+ Letter scene opens as an overlay on top of / replacing content within the Step 6 hub, with
+
+the hub's headline and background still visible/consistent behind it.
+
+ Handwriting-style font renders the letter body legibly at all target screen sizes (test for
+
+line-length overﬂow on mobile).
+
+ Floral/ribbon watermark graphics are low-opacity and do not reduce text legibility (run a
+
+contrast check).
+
+ Bouquet illustration and couple cameo render correctly, using only original/non-
+
+copyrighted artwork.
+
+ Forward/back chevron navigation works and returns user correctly to the Step 6 hub
+
+without breaking state.
+
+ Letter text is pulled from an editable conﬁg/data ﬁeld, veriﬁed by changing the text in
+
+conﬁg and conﬁrming it updates on screen without touching layout code.
+
+STEP 8 — Build Scene 5: "Everything I Love About You" — Heart Jar / Reasons
+List
+
+Triggered by a different item on the Step 6 hub (in the video this content appears after the
+letter, likely from the rosette or bouquet icon).
+
+Build Instructions
+
+Background: soft blush/pink with faint tulip/ﬂoral illustrations along the bottom edge
+of the screen.
+
+Left side: an illustrated glass jar with a tied bow/ribbon lid, ﬁlled with small heart-
+shaped tags/stickers, each heart containing a short handwritten label (examples
+visible: "eyes," "your gestures," "how you care for me," "your voice," "your smile," "how
+
+you listen to me," "your hugs"). Build this as a repeatable list component: a jar
+container that dynamically lays out N heart-shaped "reason" chips inside it, each with
+short editable text, so the gift-giver can add/remove reasons via conﬁg.
+
+Right side: large script headline reading "Everything I Love About You", with a small
+counter/index label near it (video shows what looks like a small "MY 1" style tag —
+Estimated Implementation: likely a numbered index like "reason #1" or a page
+counter tied to the pagination system; implement as a small counter badge next to the
+
+headline).
+
+Bottom edge: decorative row of small illustrated tulip ﬂowers spanning the width of
+the screen.
+
+Navigation: right-pointing chevron arrow at the right edge (bottom-right) to continue
+
+forward through the sequence.
+
+✅ Checkpoint — Step 8
+
+ Jar illustration renders with heart-shaped reason chips correctly nested inside/around it,
+
+not overﬂowing the jar artwork.
+
+ Reason chips are populated from a data list (add a test 8th reason via conﬁg and conﬁrm
+
+it renders without layout breaking).
+
+ Script headline "Everything I Love About You" renders correctly with appropriate letter-
+
+spacing/kerning for a script font at this size.
+
+ Small counter/index badge is present and increments correctly if this scene is part of a
+
+multi-page reasons sequence.
+
+ Bottom tulip decorative row renders full-width without tiling artifacts.
+
+ Forward chevron correctly advances to the next scene in sequence.
+
+ Fully responsive: jar + heart chips remain legible and non-overlapping down to smallest
+
+supported mobile width (test 360px width explicitly).
+
+STEP 9 — Reuse Hub Component for Scene 6: "Click on Items to Open"
+(Second Occurrence)
+
+Build Instructions
+
+Reuse the exact hub component built in Step 6 (same gingham background, headline,
+gift box, heart-collage icons, "CUTE" signpost, couple cameo). Only the destination
+mapping of each hotspot changes at this point in the ﬂow — this time, tapping items
+leads toward the music/media content instead of the letter/jar content.
+
+Conﬁrm the dot-pagination indicator now reﬂects a later position in the overall
+sequence (it should visibly differ from the Step 6 occurrence to show progress, not
+reset to the start).
+
+✅ Checkpoint — Step 9
+
+ Conﬁrmed via code inspection that this scene instance re-uses the Step 6 component
+
+(not a duplicated copy with drifted styling).
+
+ Hotspot destinations correctly point to the music scene (Step 10) rather than the letter/jar
+
+scenes.
+
+ Pagination dot indicator shows correct/advanced position relative to Step 6's instance.
+
+ Visual regression check: this instance is pixel-consistent with Step 6's instance except for
+
+interactive destinations (background, type, icon styling identical).
+
+STEP 10 — Build Scene 7: Embedded Song / Music Video Card
+
+Build Instructions
+
+Background: white/cream card ﬂoating on the same soft heart/star pale background
+used in Steps 3 and 5.
+
+Main content: a large embedded video-style thumbnail card, styled to resemble a
+YouTube video embed:
+
+Small circular channel-avatar icon top-left with video title text next to it: "Until I
+
+Found You - Stephen Sanchez ft. Em Beihold (Lyric Video)" and a channel
+handle beneath it.
+
+Large centered stylized text overlay reading "Until I Found You" in a bold
+handwritten/script treatment, with a small red circular play button icon
+
+positioned mid-word.
+
+Smaller sub-text below: "Stephen Sanchez ft. Em Beihold".
+
+Bottom-left corner: a small loop/repeat icon.
+
+Bottom-right corner: a small "@handle" watermark and a YouTube logo/badge,
+plus a video scrubber bar with elapsed/total time readout ("0:00 / 0:00") and a
+small red progress dot at the start of the bar.
+
+Below the embed card: a persistent mini audio-player control bar, present in this and
+subsequent scenes:
+
+Song title label: "UNTIL I FOUND YOU<3"
+
+A horizontal progress/scrub slider with a round draggable handle.
+
+Playback controls row: heart/favorite icon (left), previous-track icon, large
+central play/pause button, next-track icon, and a small options/menu icon (right).
+
+Behavior: Tapping the big play button on the embed transitions the card into an
+actively "playing" state — the embed area changes to show the real lyric-video content
+(see Step 11), while the mini control bar below reﬂects active playback (scrubber
+begins moving, play icon becomes pause icon).
+
+Build this as a genuine embedded player (e.g., a video/audio embed you control)
+rather than a static image, since the user is meant to actually hear/see the song play.
+
+Autoplay-with-sound must not ﬁre without a user gesture (respect browser autoplay
+
+policy) — audio should only start after this explicit tap-to-play interaction, which
+conveniently matches what's shown in the video (user taps to start it).
+
+✅ Checkpoint — Step 10
+
+ Embed card renders with all labeled sub-elements (avatar, title, channel handle, play
+
+button, scrubber, loop icon, watermark).
+
+ Mini persistent control bar renders below the embed with all 5 icons (favorite, previous,
+
+play/pause, next, menu) and functions correctly.
+
+ Tapping play actually starts audio/video playback — veriﬁed with sound on.
+
+ Playback does not autostart on scene load (must require explicit tap, matching browser
+
+autoplay policy and the observed video behavior).
+
+ Scrubber bar accurately reﬂects real playback position, not a static/fake animation.
+
+ Play/pause icon correctly toggles state based on actual playback status.
+
+ Loop icon is functional (toggles repeat) or clearly marked as decorative if not
+
+implemented — do not leave a broken-looking interactive element.
+
+STEP 11 — Build Scene 7b: Lyric Video Playback State
+
+Build Instructions
+
+Once playing, the embed area displays the actual lyric-video content: a warm, sepia-
+toned vintage-style image/video of two people holding bouquets of wildﬂowers, with
+animated lyric text overlaid in white, centered: e.g. "Georgia, wrap me up in all your, I
+
+want you in my arms" timed to the song.
+
+A small watermark/handle ("@sydhslm" or similar creator credit) appears bottom-
+center of the video content — if using a real licensed lyric video asset, retain proper
+
+attribution; if building an original version, replace with your own subtle credit or omit.
+
+Two small circular icons appear bottom-right of the video frame during playback (in
+the reference these look like a checkmark/approve icon and a bookmark/save icon) —
+
+Estimated Implementation: implement as "mark as favorite song" and
+"save/bookmark" affordances consistent with the rest of the mini-player's
+iconography.
+
+Mini control bar beneath continues to reﬂect live playback position throughout.
+
+The right-edge chevron remains available to skip forward to the next scene even mid-
+playback — verify audio either continues in the background, fades out gracefully, or
+pauses cleanly (choose one deliberate behavior; do not let it error out or overlap
+
+incorrectly with the next scene, especially if the next scene also has ambient audio
+elements).
+
+✅ Checkpoint — Step 11
+
+ Lyric text overlays appear synced (even approximately) with the audio, not randomly
+
+timed.
+
+ Video/image content is warm-toned and thematically consistent with the rest of the site's
+
+romantic aesthetic.
+
+ Attribution/watermark is present and correctly licensed or replaced with original content
+
+— legal check completed.
+
+ The two small bottom-right icons are functional or intentionally decorative (documented
+
+which).
+
+ Navigating away mid-song produces a clean, tested audio behavior (deﬁned explicitly:
+
+pause / fade-out / continue) — not silent failure or audio overlap bugs.
+
+ Conﬁrmed working on both desktop (mouse) and mobile (touch) input for all playback
+
+controls.
+
+STEP 12 — Build Scene 8: Photo Memory Grid — "Here's a Little Reminder of
+How Pretty You Are"
+
+Build Instructions
+
+Background: clean white/cream background, minimal decoration — small pixel-art-
+style heart icons (two, outlined in dotted/pixel style) centered at the top as a header
+ﬂourish.
+
+Main content: a horizontal row of 4 photo frames, edge-to-edge, each showing a
+different personal photo of the recipient. Photos should have consistent aspect
+ratio/cropping (portrait-oriented, equal width columns) so the row reads as one clean
+strip, not misaligned thumbnails.
+
+Caption below the photo row: center-aligned two-line text in the pink/rose accent
+color and script-adjacent rounded font: "Here's a little reminder of how pretty you
+are <3" — this text is shown building in progressively (conﬁrmed by seeing "Here's a
+littl" mid-animation before completing) — reuse the same letter/word-by-word text
+
+reveal animation technique established in Steps 3 and 5, applied here to body copy
+instead of a big headline (so make the reveal component ﬂexible enough to handle
+both headline-scale and caption-scale text).
+
+Top-right corner: a small pill-shaped "Back" button, muted/outlined style (lower
+visual weight than the primary CTA buttons elsewhere) allowing the user to return to
+the previous scene without going through the full forward sequence.
+
+Photos must be user-uploadable/conﬁg-driven (this is a template product — the 4
+
+images need to be swappable per recipient without a code change).
+
+✅ Checkpoint — Step 12
+
+ 4-photo row renders with consistent sizing/cropping regardless of the uploaded source
+
+image's original aspect ratio (verify with a portrait, landscape, and square test image).
+
+ Pixel-heart header icons render correctly and are decorative-only (conﬁrm they're not
+
+mistakenly tappable/leading nowhere).
+
+ Caption text uses the shared progressive-reveal component (conﬁrmed via code reuse,
+
+not a re-implementation).
+
+ "Back" button is present, correctly de-emphasized in styling relative to primary buttons,
+
+and functionally returns to the correct prior scene.
+
+ Photos are loaded from swappable conﬁg/data source, not hardcoded ﬁle references —
+
+veriﬁed by swapping in 4 placeholder test images via conﬁg only.
+
+ Layout holds on mobile widths without photos becoming so narrow they're illegible
+
+(deﬁne a minimum photo width and either scroll or stack below that threshold — see Step
+
+17).
+
+STEP 13 — Reuse Hub Component for Scene 9: "Click on Items to Open"
+(Third/Final Occurrence)
+
+Build Instructions
+
+Reuse the Step 6 hub component once more. This ﬁnal pass routes the user toward the
+
+closing "award" scene (Step 14) — meaning by this point every item on the hub across
+its 3 appearances should collectively have led the user through: love letter → reasons
+jar → song/music → photo grid → ﬁnal award, conﬁrming the hub is really acting as a
+recurring navigation checkpoint the user passes through 3 times on the way through
+the full story, not 3 unrelated screens that happen to look similar.
+
+Map out the full hotspot → destination matrix explicitly during development (a simple
+table of "hub occurrence #" × "icon" × "destination scene") so QA can verify every path
+is reachable and nothing dead-ends or double-routes by accident.
+
+✅ Checkpoint — Step 13
+
+ Full hotspot-to-destination matrix is documented (all 3 hub occurrences × all icons on
+
+each).
+
+ QA has manually tapped every single hotspot across all 3 hub occurrences and conﬁrmed
+
+each leads to the correct unique destination.
+
+ No dead-end hotspots exist (every tappable icon goes somewhere).
+
+ No duplicate/orphaned content exists that no hotspot links to (every scene built in Steps
+
+7, 8, 10-12 is reachable from at least one hub occurrence).
+
+ Dot-pagination indicator correctly shows this as the ﬁnal/latest hub occurrence in
+
+sequence.
+
+STEP 14 — Build Scene 10: Final Reveal — "BEST GIRLFRIEND AWARD"
+
+Certiﬁcate
+
+This is the emotional climax / ﬁnal card of the experience.
+
+Build Instructions
+
+Background: clean white/cream background with a soft, low-opacity blush heart-
+shaped glow/watermark centered behind the content (a large soft-focus pink heart
+shape sitting behind the text, giving a warm glow rather than a hard graphic).
+
+Content, top to bottom, centered, serif/formal-elegant type treatment (this scene
+should read more "certiﬁcate/award" formal than the scrapbook-cute styling used
+elsewhere — a deliberate tonal shift for the closing emotional beat):
+
+1.  Large serif headline: "BEST GIRLFRIEND AWARD"
+
+2.  Small subtext: "this award is presented to:"
+
+3.  Large elegant script name ﬁeld: recipient's name (shown as "Lara Jean" in the
+reference — this MUST be a conﬁg/data-driven ﬁeld, the single most important
+
+personalization point in the entire template).
+
+4.  A thin horizontal divider rule.
+
+5.  A short personal closing message in a smaller serif font (2-3 sentences, warm
+and sincere in tone — again, this is a conﬁg-editable ﬁeld, not ﬁxed copy).
+
+6.  A small illustrated ribbon/rosette award badge icon (gold star on a pink ribbon
+
+medallion) centered at the very bottom, as a decorative "seal."
+
+Navigation: a right-pointing chevron at the right edge suggests there may be
+additional content after this card (Estimated Implementation — the reference video
+cuts off shortly after reaching this scene; if you have no further content planned,
+either remove the forward chevron here or loop it back to a graceful closing/replay
+state per Step 15).
+
+This card is the natural "screenshot moment" of the whole experience — treat it as
+needing to look ﬂawless when captured as a static image (many recipients will
+screenshot this card speciﬁcally), so pay extra attention to font kerning, contrast, and
+centering here relative to other scenes.
+
+✅ Checkpoint — Step 14
+
+ Certiﬁcate-style formal serif type is visually distinct from the cute/scrapbook type used
+
+in earlier scenes — conﬁrm this tonal shift reads intentionally, not like an inconsistent bug.
+
+ Recipient name ﬁeld pulls from conﬁg/data, tested by swapping in 3 different sample
+
+names and conﬁrming layout doesn't break with a very short name or a long double name.
+
+ Closing message ﬁeld is conﬁg-editable, tested with a placeholder long-form message to
+
+conﬁrm text wrapping holds up.
+
+ Ribbon/badge icon renders crisp and centered at all tested breakpoints.
+
+ Soft heart glow watermark is subtle enough not to reduce text contrast/legibility
+
+(contrast-check against WCAG AA for the body text at minimum).
+
+ Forward chevron either leads somewhere intentional or is removed/replaced per the
+
+decision made above — no dangling non-functional arrow.
+
+ Manually screenshot this scene at both desktop and mobile size and visually conﬁrm it
+
+looks "share-ready" with no clipped text or misaligned elements.
+
+STEP 15 — Build the Closing State (End of Experience)
+
+The reference video ends shortly after the award card, so this step is largely Estimated
+Implementation — but every real product needs a deﬁned ending, so build one
+deliberately rather than leaving a dead-end.
+
+Build Instructions
+
+Recommended pattern: after the award card, provide a simple, low-key closing
+affordance — e.g., a small "Replay" or "Back to the beginning" pill button, OR simply
+let the award card be the natural resting end-state with no further forced navigation
+
+(many recipients will just sit on this screen).
+
+Do not auto-redirect the user away from the award card — let them linger on it as long
+as they want.
+
+If you want a "credits" style close (matching the observed on-video social handle
+callout "Contact me for more details — template_diaryy — Template Diary | Digital
+templates"), that appears to be an artifact of the template seller's own promotional
+video overlay, not part of the actual website itself — do not build that promotional
+watermark into the site; it belongs to the marketing video, not the product.
+
+✅ Checkpoint — Step 15
+
+ The experience has a clear, intentional resting end-state (conﬁrmed: user is never stuck
+
+mid-transition or facing a broken/blank screen).
+
+ No promotional/seller watermark content from the reference marketing video has been
+
+mistakenly built into the actual site.
+
+ If a Replay function is implemented, conﬁrm it correctly resets all state (passcode boxes,
+
+playback position, hub pagination) back to the true beginning with no leftover state bugs.
+
+ Full end-to-end manual walkthrough completed once: passcode → wrong attempt →
+
+correct unlock → surprise teaser → all 3 hub passes and all sub-scenes → ﬁnal award card →
+
+close/replay, with zero errors along the way.
+
+STEP 16 — Make Every Scene Responsive
+
+Do this as its own dedicated pass after all scenes exist in Step 0–15, rather than trying to
+perfect responsiveness scene-by-scene (avoids rework when shared components change).
+
+Build Instructions
+
+The reference was captured on a phone (portrait, 720×1280) — treat mobile as the
+primary target, then scale up gracefully to tablet/desktop, rather than the reverse.
+
+Passcode screen (Step 2): on narrow mobile, keep the left/right split if width allows
+down to ~480px; below that, consider stacking the mascot illustration above the
+keypad instead of side-by-side, or shrinking the illustration panel to a smaller top
+banner so the keypad remains full-size and easily tappable (keypad buttons must stay
+
+large enough for comfortable thumb tapping — minimum ~44×44px touch target).
+
+Hub scenes (Step 6/9/13): icons must remain individually tappable at small sizes —
+do not let the heart-collage icons shrink below a comfortable tap target; if needed,
+
+increase spacing/tap-padding around small icons rather than shrinking the visual
+icon itself.
+
+Photo grid (Step 12): 4-across on desktop/tablet; on narrow mobile, either keep 4-
+across at reduced size (if photos remain recognizable) or allow horizontal scroll/swipe
+
+for the photo strip rather than wrapping to a broken grid.
+
+Letter/jar/award scenes: ensure text reﬂows naturally and font sizes scale with a
+responsive type scale (not ﬁxed pixel sizes) so long letter text doesn't overﬂow its
+
+container on small screens.
+
+Music embed (Step 10/11): maintain aspect ratio on resize; controls must remain
+reachable/tappable on mobile without being obscured by on-screen keyboard or
+browser chrome.
+
+Test both portrait and landscape mobile orientation explicitly — the source material is
+portrait, but users will rotate devices.
+
+✅ Checkpoint — Step 16
+
+ Every one of the 10 scenes built in Steps 2–14 has been manually tested at: 1440px
+
+desktop, 1024px tablet, 768px small tablet, 428px large mobile, 360px small mobile.
+
+ Every interactive element (keypad keys, hub icons, buttons, chevrons, player controls)
+
+meets a minimum 44×44px touch target at the smallest tested width.
+
+ No horizontal overﬂow/scrollbar appears unintentionally at any tested width (except
+
+where horizontal photo scroll is a deliberate design choice).
+
+ Text never overﬂows its container or gets clipped at any tested width.
+
+ Landscape mobile orientation tested and does not break layout.
+
+STEP 17 — Motion & Micro-Interaction Polish Pass
+
+Build Instructions
+
+Standardize animation timing across the whole site so it feels like one cohesive
+product rather than mismatched scenes:
+
+Scene transitions (crossfade between scenes): ~400–600ms, ease-in-out.
+(Estimated Implementation)
+
+Letter-by-letter headline reveal (Steps 3, 5, 12): ~40–80ms per character/word
+chunk. (Estimated Implementation)
+
+Button press feedback: ~100–150ms scale-down/spring-back.
+
+Idle "breathing" icon pulse (Step 6): slow, ~2-3s loop, subtle (scale 1.0 → 1.03), so
+it reads as inviting rather than distracting.
+
+Respect  prefers-reduced-motion : provide a reduced-motion fallback where headline
+reveals appear instantly (or with a simple fade) and idle pulsing/breathing animations
+
+are disabled, for users with that OS/browser setting enabled.
+
+Keep motion consistent in direction — e.g., forward-navigation transitions should
+consistently slide/fade in from the same direction throughout, and backward-
+
+navigation should mirror it, so users build an intuitive spatial sense of "forward" vs
+"back."
+
+✅ Checkpoint — Step 17
+
+ A single shared animation-timing conﬁg/token set is used across all scenes (conﬁrmed
+
+via code, not just "looks similar").
+
+prefers-reduced-motion  is detected and correctly disables/simpliﬁes non-essential
+
+animations (test by enabling this OS setting and re-walking the whole ﬂow).
+
+ Forward/backward transition direction is consistent throughout the entire experience.
+
+ No animation causes layout shift/jank (test with browser dev tools
+
+performance/rendering panel — no dropped frames on a mid-range mobile device proﬁle).
+
+STEP 18 — Accessibility & Performance Pass
+
+Build Instructions
+
+Accessibility:
+
+All interactive elements (keypad keys, hub icons, buttons, chevrons, player
+controls) must be reachable via keyboard (Tab/Enter/Space) in addition to
+mouse/touch, even though the reference experience is touch-ﬁrst.
+
+Add appropriate ARIA labels to icon-only buttons (e.g., the heart-collage icons,
+play/pause, favorite, chevrons) since they carry no visible text label.
+
+Maintain sufficient color contrast for all body text against its background (many
+scenes use light pastel-on-pastel combinations — explicitly verify each
+text/background pairing).
+
+Passcode input should be usable by screen reader users (announce box ﬁll state,
+announce wrong/correct result).
+
+Performance:
+
+Lazy-load below-the-fold/not-yet-visible scene assets (photos, video embed)
+rather than loading everything on ﬁrst paint, since this is an image/illustration-
+heavy experience.
+
+Compress all illustration/photo assets appropriately (serve responsive image
+
+sizes, modern formats like WebP/AVIF with fallback).
+
+Preload only the fonts and assets needed for the ﬁrst scene (passcode screen);
+defer the rest.
+
+Audio/video (Step 10/11) should not preload fully until the user taps play.
+
+✅ Checkpoint — Step 18
+
+ Full keyboard-only walkthrough of the entire experience completed successfully (no
+
+mouse/touch used).
+
+ Screen reader spot-check completed on passcode entry and at least 2 other scenes.
+
+ Automated accessibility audit (e.g., axe or Lighthouse accessibility score) run on every
+
+scene; no critical/serious issues outstanding.
+
+ Lighthouse performance score checked on mobile throttled network proﬁle; no render-
+
+blocking asset issues ﬂagged for the ﬁrst scene.
+
+ All images conﬁrmed compressed/responsive (spot-check network tab for oversized
+
+image downloads).
+
+ Video/audio conﬁrmed not preloading before user interaction (check network tab on
+
+scene load).
+
+STEP 19 — Full QA Pass
+
+Build Instructions
+
+Run a structured QA sweep across browsers and devices before calling this done. Use
+
+the matrix below as your test plan.
+
+Test Area
+
+Chrome Safari Firefox Edge
+
+iOS Safari
+
+Android
+
+(touch)
+
+Chrome
+
+(touch)
+
+Passcode entry + wrong/correct
+
+paths
+
+All 3 hub occurrences + every
+
+hotspot
+
+Letter, jar, photo, award scenes
+
+render
+
+Audio/video playback +
+
+controls
+
+Animations/transitions
+
+smooth, no jank
+
+Responsive layout at all
+
+breakpoints
+
+Conﬁg-driven content swap
+
+(name/photos/letter)
+
+Accessibility (keyboard +
+
+screen reader)
+
+✅ Checkpoint — Step 19
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+☐
+
+ Every cell in the matrix above is checked off with a passing result, or has a logged, triaged
+
+bug against it.
+
+ All critical/blocking bugs from the sweep are ﬁxed and re-tested.
+
+ A second person (not the original builder) has independently walked through the full
+
+experience once, start to ﬁnish, and conﬁrmed it matches the reference video's intended
+
+ﬂow.
+
+STEP 20 — Final Personalization Conﬁg & Deployment
+
+Build Instructions
+
+Before shipping to an actual recipient, conﬁrm every personalization data point is
+centralized in one conﬁg ﬁle/CMS entry, not scattered:
+
+4-digit passcode
+
+Recipient name (award scene)
+
+Letter body text
+
+"Reasons I love you" list items (jar scene)
+
+4 gallery photos
+
+Song choice (title/embed source)
+
+Closing award message
+
+Deploy to a stable, permanent hosting URL suitable for sharing as a gift link (conﬁrm
+HTTPS, conﬁrm the URL is short/shareable, conﬁrm the site loads correctly on a cold
+cache from a fresh device/network to simulate the real recipient's ﬁrst-open
+experience).
+
+Do a ﬁnal "gift simulation" test: have someone unfamiliar with the build open the real
+shareable link cold, on their own phone, and complete the full ﬂow start to ﬁnish
+without guidance, to catch any friction the builder is too familiar with the product to
+notice.
+
+✅ Checkpoint — Step 20
+
+ Single conﬁg source conﬁrmed to control all 7 personalization data points listed above.
+
+ Site deployed to ﬁnal HTTPS URL.
+
+ Cold-cache ﬁrst load tested on a fresh device/network proﬁle.
+
+ Independent "gift simulation" tester has completed the full ﬂow unaided and conﬁrmed it
+
+feels complete, emotionally coherent, and bug-free.
+
+ Sign-off: all 20 Steps above show fully checked checkpoints with zero unresolved items.
+
+Appendix — Estimated Implementation Summary
+
+The following items were not shown with full certainty in the reference video and were
+
+built using best-judgment estimates. Revisit these if you obtain higher-ﬁdelity reference
+material:
+
+Exact hex color values (Step 1)
+
+Exact font families (Step 1)
+
+Whether a branded loading splash exists before the passcode screen (Step 2)
+
+Exact wording/duration of the "UNLOCK" success conﬁrmation (Step 4)
+
+Exact dismiss/back interaction on the letter overlay (Step 7)
+
+Exact meaning of the "MY 1" counter badge on the reasons scene (Step 8)
+
+Function of the two small bottom-right icons during lyric video playback (Step 11)
+
+What (if anything) exists after the ﬁnal award card (Step 14/15)
+
+All animation timing values (Step 17)
+
+
