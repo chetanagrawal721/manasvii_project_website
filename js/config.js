@@ -29,18 +29,18 @@ const CONFIG = {
   ],
 
   // ── REASONS I LOVE YOU ────────────────────────────────────
-  // Full heartfelt reasons displayed in the jar.
-  REASONS_FULL: [
-    "Your smile makes my hardest days brighter.",
-    "Your kindness inspires me every day.",
-    "I feel at home whenever I'm with you.",
-    "You believe in me even when I doubt myself.",
-    "Your laugh is my favorite sound.",
-    "You make ordinary moments unforgettable.",
-    "Your hugs feel like the safest place in the world.",
-    "You always know how to make me smile.",
-    "Every memory with you becomes my favorite.",
-    "Because loving you is the easiest thing I've ever done."
+  // Heart chips shown inside the jar — add or remove freely.
+  reasons: [
+    "your eyes",
+    "your smile",
+    "your voice",
+    "your hugs",
+    "how you care",
+    "your gestures",
+    "how you listen",
+    "your laugh",
+    "your kindness",
+    "just you ♡"
   ],
 
   // ── PHOTOS (Scrapbook Memories) ───────────────────────────
