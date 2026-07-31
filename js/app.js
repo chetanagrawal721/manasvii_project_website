@@ -9,6 +9,7 @@
 /* ──────────────────────────────────────────────────────────
    SCENE DEFINITION & ORDER
    ────────────────────────────────────────────────────────── */
+
 const SCENES = [
   's-passcode',   // 0
   's-wrong',      // 1
@@ -16,16 +17,17 @@ const SCENES = [
   's-hub-a',      // 3
   's-letter',     // 4
   's-jar',        // 5
-  's-hub-b',      // 6
-  's-music',      // 7
-  's-photos',     // 8
-  's-hub-c',      // 9
-  's-award',      // 10
-  's-end'         // 11
+  's-reasons',    // 6
+  's-hub-b',      // 7
+  's-music',      // 8
+  's-photos',     // 9
+  's-hub-c',      // 10
+  's-award',      // 11
+  's-end'         // 12
 ];
 
 const PAGINATED_SCENES = [
-  's-hub-a', 's-letter', 's-jar',
+  's-hub-a', 's-letter', 's-jar', 's-reasons',
   's-hub-b', 's-music',  's-photos',
   's-hub-c', 's-award'
 ];
@@ -149,6 +151,10 @@ function onSceneEnter(id) {
         if (block) block.innerHTML = '';
       }
       break;
+
+    case 's-reasons':
+      initReasonsScene();
+      break;
   }
 }
 
@@ -230,9 +236,132 @@ function runTextReveal(containerId, text, delayPerChar = 45) {
 }
 
 /* ──────────────────────────────────────────────────────────
-   PASSCODE LOGIC
+   REASONS SCENE — premium interactive jar experience
    ────────────────────────────────────────────────────────── */
+let reasonsInitialized = false;
+
+function initReasonsScene() {
+  const scene = document.getElementById('s-reasons');
+  if (!scene) return;
+
+  // Reset on every visit so hearts rebuild properly
+  if (reasonsInitialized) return;
+  reasonsInitialized = true;
+
+  const chipsContainer = scene.querySelector('#reason-chips');
+  const cardsContainer = scene.querySelector('.reasons-cards');
+  const progressEl     = scene.querySelector('.reasons-progress-text');
+  const reasons        = (CONFIG.REASONS_FULL || []);
+  const total          = reasons.length;
+  let revealed         = 0;
+
+  // Staggered heart chip creation
+  reasons.forEach((text, i) => {
+    const heart = document.createElement('button');
+    heart.className = 'reason-heart-chip';
+    heart.setAttribute('tabindex', '0');
+    heart.setAttribute('aria-label', `Open reason ${i + 1}`);
+    heart.innerHTML = `<svg viewBox="0 0 32 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 27 C16 27 1 17 1 8 C1 3.5 4.5 1 8.5 1 C11.5 1 14 3 16 5.5 C18 3 20.5 1 23.5 1 C27.5 1 31 3.5 31 8 C31 17 16 27 16 27Z" fill="url(#hg${i})" stroke="#C2185B" stroke-width="1.2"/>
+      <defs>
+        <linearGradient id="hg${i}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#F48FB1"/>
+          <stop offset="100%" stop-color="#E91E63"/>
+        </linearGradient>
+      </defs>
+      <circle cx="10" cy="9" r="2.5" fill="white" opacity="0.5"/>
+    </svg>
+    <span class="chip-num">${i + 1}</span>`;
+    heart.style.animationDelay = `${i * 0.1}s`;
+
+    const reveal = () => {
+      if (heart.classList.contains('opened')) return;
+      heart.classList.add('opened');
+      revealed++;
+
+      // Update progress
+      if (progressEl) progressEl.textContent = `${revealed} / ${total}`;
+      scene.querySelector('.reasons-progress-bar-fill').style.width = `${(revealed / total) * 100}%`;
+
+      // Spawn sparkles at heart position
+      spawnSparkles(heart);
+
+      // Create card
+      const card = document.createElement('div');
+      card.className = 'reason-card-item';
+      card.style.animationDelay = '0s';
+      card.innerHTML = `
+        <div class="card-number">${revealed}</div>
+        <div class="card-heart-icon">💕</div>
+        <p class="card-text">${text}</p>`;
+      cardsContainer.appendChild(card);
+
+      // Scroll card into view
+      setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+
+      // Celebration when all opened
+      if (revealed === total) {
+        setTimeout(() => triggerReasonsCelebration(scene), 600);
+      }
+    };
+
+    heart.addEventListener('click', reveal);
+    heart.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); reveal(); }
+    });
+
+    chipsContainer.appendChild(heart);
+  });
+
+  // Init progress bar
+  if (progressEl) progressEl.textContent = `0 / ${total}`;
+}
+
+function spawnSparkles(origin) {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return;
+  const rect = origin.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top  + rect.height / 2;
+  const emojis = ['✨','💖','🌸','⭐','💫'];
+  for (let k = 0; k < 6; k++) {
+    const sp = document.createElement('div');
+    sp.className = 'reason-sparkle';
+    sp.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    sp.style.left = `${cx}px`;
+    sp.style.top  = `${cy}px`;
+    sp.style.setProperty('--dx', `${(Math.random() - 0.5) * 120}px`);
+    sp.style.setProperty('--dy', `${-(Math.random() * 100 + 40)}px`);
+    sp.style.animationDelay = `${k * 0.05}s`;
+    document.body.appendChild(sp);
+    setTimeout(() => sp.remove(), 1100);
+  }
+}
+
+function triggerReasonsCelebration(scene) {
+  const existing = scene.querySelector('.reasons-celebration');
+  if (existing) return;
+  const cel = document.createElement('div');
+  cel.className = 'reasons-celebration';
+  cel.innerHTML = `
+    <div class="cel-inner">
+      <div class="cel-hearts" aria-hidden="true">💖💕💖</div>
+      <h3 class="cel-title">You are my everything 🌸</h3>
+      <p class="cel-subtitle">These are just 10 of a million reasons I love you, Manasvii.</p>
+      <button class="cel-btn" id="reasons-continue-btn" aria-label="Continue our journey">
+        Continue Our Journey ✨
+      </button>
+    </div>`;
+  scene.appendChild(cel);
+  // Trigger entrance
+  requestAnimationFrame(() => cel.classList.add('visible'));
+  cel.querySelector('#reasons-continue-btn').addEventListener('click', () => {
+    showScene('s-hub-b', 'forward');
+  });
+}
+
 function initPasscode() {
+
   const keys = document.querySelectorAll('.numpad-key[data-digit]');
   const backBtn = document.getElementById('backspace-btn');
 
@@ -502,7 +631,7 @@ function initLetterNav() {
   document.getElementById('letter-back')?.addEventListener('click', () =>
     showScene('s-hub-a', 'back'));
   document.getElementById('letter-next')?.addEventListener('click', () =>
-    showScene('s-jar', 'forward'));
+    showScene('s-reasons', 'forward'));
 }
 
 /* ──────────────────────────────────────────────────────────
@@ -533,9 +662,9 @@ function renderJar() {
 
 function initJarNav() {
   document.getElementById('jar-back')?.addEventListener('click', () =>
-    showScene('s-hub-a', 'back'));
+    showScene('s-reasons', 'back'));
   document.getElementById('jar-next')?.addEventListener('click', () =>
-    showScene('s-music', 'forward'));
+    showScene('s-hub-b', 'forward'));
 }
 
 /* ──────────────────────────────────────────────────────────

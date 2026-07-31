@@ -1987,3 +1987,427 @@
   .scrapbook-note-preview { font-size: var(--text-sm); -webkit-line-clamp: 4; margin-top: 2px; }
   .memory-modal-content { padding: 16px; max-width: 95vw; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   SCENE 6 — 10 REASONS WHY I LOVE YOU
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Keyframes ─────────────────────────────────────────────── */
+@keyframes reasonsFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes heartPop {
+  0%   { transform: scale(0) rotate(-20deg); opacity: 0; }
+  60%  { transform: scale(1.15) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+@keyframes chipOpened {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.3); }
+  60%  { transform: scale(0.8); opacity: 0.7; }
+  100% { transform: scale(0); opacity: 0; pointer-events: none; }
+}
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(20px) scale(0.93); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes sparkleFloat {
+  0%   { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
+}
+@keyframes jarGlow {
+  0%, 100% { box-shadow: 0 0 30px rgba(232,114,138,0.25), 0 0 0 4px rgba(242,166,196,0.15); }
+  50%       { box-shadow: 0 0 50px rgba(232,114,138,0.5), 0 0 0 8px rgba(242,166,196,0.3); }
+}
+@keyframes rpetalFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-14px) rotate(10deg); }
+}
+@keyframes celebrationPop {
+  from { transform: scale(0.7) translateY(40px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+@keyframes heartBeat2 {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.2); }
+}
+@keyframes progressGrow {
+  from { width: 0%; }
+}
+@keyframes chipBounceIn {
+  0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
+  70%  { transform: scale(1.2) rotate(5deg);  opacity: 1; }
+  100% { transform: scale(1) rotate(0);       opacity: 1; }
+}
+
+/* ── Scene wrapper ─────────────────────────────────────────── */
+.reasons-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(135deg,
+    #fff8fb 0%,
+    #fce4ec 35%,
+    #fff3f7 65%,
+    #f8eaf3 100%
+  );
+  overflow: hidden;
+  animation: reasonsFadeIn 0.7s ease both;
+}
+
+/* Background petals */
+.reasons-bg-petals {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.rpetal {
+  position: absolute;
+  font-size: 28px;
+  opacity: 0.35;
+  animation: rpetalFloat 5s ease-in-out infinite;
+  user-select: none;
+}
+
+/* ── Left panel ────────────────────────────────────────────── */
+.reasons-left {
+  flex: 0 0 46%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  position: relative;
+  z-index: 1;
+  border-right: 2px dashed rgba(232,114,138,0.2);
+}
+
+.reasons-jar-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: jarGlow 4s ease-in-out infinite;
+  border-radius: 50%;
+}
+
+.reasons-jar-svg {
+  width: 220px;
+  height: auto;
+  filter: drop-shadow(0 8px 24px rgba(232,114,138,0.3));
+}
+
+.jar-glow-ring {
+  position: absolute;
+  inset: -16px;
+  border-radius: 50%;
+  border: 3px dashed rgba(242,166,196,0.5);
+  animation: rpetalFloat 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Heart chips overlay on jar */
+.reason-chips {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -20%);
+  width: 160px;
+  height: 140px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-content: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+.reason-heart-chip {
+  width: 42px;
+  height: 42px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: chipBounceIn 0.5s ease both;
+  transition: transform 0.2s ease, filter 0.2s;
+  filter: drop-shadow(0 3px 6px rgba(178,58,58,0.3));
+  padding: 0;
+}
+
+.reason-heart-chip svg {
+  width: 36px;
+  height: 36px;
+}
+
+.reason-heart-chip:hover:not(.opened),
+.reason-heart-chip:focus:not(.opened) {
+  transform: scale(1.25) rotate(-5deg);
+  filter: drop-shadow(0 6px 14px rgba(233,30,99,0.5));
+  outline: none;
+}
+
+.reason-heart-chip.opened {
+  animation: chipOpened 0.45s ease forwards;
+  pointer-events: none;
+}
+
+.chip-num {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: #B23A3A;
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Jar hint text */
+.jar-hint {
+  margin-top: 18px;
+  font-family: var(--font-serif, serif);
+  font-size: 14px;
+  color: rgba(178,58,58,0.75);
+  text-align: center;
+  letter-spacing: 0.03em;
+  font-style: italic;
+  animation: reasonsFadeIn 0.8s ease 0.5s both;
+}
+
+/* ── Right panel ───────────────────────────────────────────── */
+.reasons-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 28px 24px;
+  gap: 16px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232,114,138,0.4) transparent;
+}
+.reasons-right::-webkit-scrollbar { width: 4px; }
+.reasons-right::-webkit-scrollbar-thumb { background: rgba(232,114,138,0.4); border-radius: 4px; }
+
+/* Title */
+.reasons-title {
+  font-family: var(--font-serif, serif);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: #B23A3A;
+  line-height: 1.1;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.reasons-title span {
+  color: #E8728A;
+  font-size: 0.8em;
+  display: block;
+}
+
+/* Progress bar */
+.reasons-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.reasons-progress-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: rgba(232,114,138,0.15);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.reasons-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #F48FB1, #E91E63);
+  border-radius: 99px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.reasons-progress-text {
+  font-family: var(--font-ui, sans-serif);
+  font-size: 13px;
+  font-weight: 700;
+  color: #B23A3A;
+  white-space: nowrap;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* ── Reason Cards ─────────────────────────────────────────── */
+.reasons-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.reason-card-item {
+  background: white;
+  border-left: 4px solid #E8728A;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 4px 16px rgba(232,114,138,0.12), 0 1px 4px rgba(0,0,0,0.04);
+  animation: cardReveal 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+.card-number {
+  font-family: var(--font-serif, serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: #E8728A;
+  line-height: 1;
+  min-width: 28px;
+}
+
+.card-heart-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  animation: heartBeat2 1.5s ease-in-out infinite;
+}
+
+.card-text {
+  font-family: var(--font-serif, serif);
+  font-size: 15px;
+  color: #4a3040;
+  line-height: 1.55;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Sparkle ─────────────────────────────────────────────── */
+.reason-sparkle {
+  position: fixed;
+  font-size: 20px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: sparkleFloat 0.9s ease-out both;
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* ── Celebration overlay ─────────────────────────────────── */
+.reasons-celebration {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,240,248,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.reasons-celebration.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.cel-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 40px 32px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(232,114,138,0.25), 0 0 0 2px rgba(232,114,138,0.15);
+  max-width: 420px;
+  text-align: center;
+  animation: celebrationPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+.cel-hearts {
+  font-size: 40px;
+  animation: heartBeat2 1.2s ease-in-out infinite;
+  letter-spacing: 8px;
+}
+
+.cel-title {
+  font-family: var(--font-serif, serif);
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  color: #B23A3A;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.cel-subtitle {
+  font-family: var(--font-serif, serif);
+  font-size: 16px;
+  color: #7a4060;
+  line-height: 1.6;
+  margin: 0;
+  font-style: italic;
+}
+
+.cel-btn {
+  background: linear-gradient(135deg, #E8728A, #B23A3A);
+  color: white;
+  font-family: var(--font-ui, sans-serif);
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 99px;
+  padding: 14px 36px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  box-shadow: 0 8px 24px rgba(178,58,58,0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.cel-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 32px rgba(178,58,58,0.45);
+}
+.cel-btn:active {
+  transform: scale(0.97);
+}
+
+/* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .reasons-scene {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .reasons-left {
+    flex: 0 0 auto;
+    border-right: none;
+    border-bottom: 2px dashed rgba(232,114,138,0.2);
+    padding: 20px 16px 12px;
+  }
+  .reasons-jar-svg { width: 160px; }
+  .reason-chips { width: 120px; height: 110px; gap: 6px; }
+  .reason-heart-chip { width: 34px; height: 34px; }
+  .reason-heart-chip svg { width: 28px; height: 28px; }
+  .reasons-right {
+    flex: 1;
+    padding: 16px;
+    gap: 12px;
+    overflow-y: auto;
+  }
+  .reasons-title { font-size: 1.6rem; }
+  .card-text { font-size: 14px; }
+  .cel-inner { padding: 28px 20px; margin: 0 16px; }
+  .cel-title { font-size: 1.4rem; }
+}
+

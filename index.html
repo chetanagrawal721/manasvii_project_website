@@ -507,6 +507,79 @@
 
 
     <!-- ╔══════════════════════════════════════════════╗ -->
+    <!-- ║  SCENE 6 — REASONS WHY I LOVE YOU (Premium) ║ -->
+    <!-- ╚══════════════════════════════════════════════╝ -->
+    <section id="s-reasons" class="scene" aria-label="10 Reasons Why I Love You">
+      <div class="reasons-scene">
+
+        <!-- Decorative background petals -->
+        <div class="reasons-bg-petals" aria-hidden="true">
+          <span class="rpetal" style="top:8%;left:6%;animation-delay:0s">🌸</span>
+          <span class="rpetal" style="top:15%;left:85%;animation-delay:0.6s">🌷</span>
+          <span class="rpetal" style="top:75%;left:3%;animation-delay:1.2s">✿</span>
+          <span class="rpetal" style="top:80%;left:90%;animation-delay:1.8s">🌸</span>
+          <span class="rpetal" style="top:50%;left:92%;animation-delay:0.3s">🌺</span>
+        </div>
+
+        <!-- Left panel: Jar -->
+        <div class="reasons-left">
+          <div class="reasons-jar-wrap">
+            <!-- Jar glow ring -->
+            <div class="jar-glow-ring" aria-hidden="true"></div>
+            <!-- Jar SVG -->
+            <svg class="reasons-jar-svg" viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="jarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="rgba(255,255,255,0.92)"/>
+                  <stop offset="100%" stop-color="rgba(255,220,235,0.75)"/>
+                </linearGradient>
+                <filter id="jarBlur">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="1.5"/>
+                </filter>
+              </defs>
+              <!-- Jar body -->
+              <path d="M38 90 Q34 230 100 248 Q166 230 162 90 Z" fill="url(#jarGrad)" stroke="#E8728A" stroke-width="2.5"/>
+              <!-- Jar neck -->
+              <rect x="54" y="66" width="92" height="28" rx="8" fill="rgba(255,255,255,0.88)" stroke="#E8728A" stroke-width="2"/>
+              <!-- Jar lid -->
+              <rect x="42" y="48" width="116" height="22" rx="11" fill="#F2A6C4" stroke="#B23A3A" stroke-width="2.5"/>
+              <!-- Bow knot on lid -->
+              <path d="M100 48 Q86 36 78 42 Q88 48 100 48Z" fill="#B23A3A"/>
+              <path d="M100 48 Q114 36 122 42 Q112 48 100 48Z" fill="#B23A3A"/>
+              <circle cx="100" cy="48" r="7" fill="#E8728A" stroke="#B23A3A" stroke-width="1.5"/>
+              <!-- Jar shine -->
+              <ellipse cx="58" cy="120" rx="6" ry="22" fill="white" opacity="0.35" filter="url(#jarBlur)"/>
+              <ellipse cx="70" cy="95" rx="4" ry="8" fill="white" opacity="0.25"/>
+            </svg>
+
+            <!-- Heart chips inside the jar -->
+            <div class="reason-chips" id="reason-chips" aria-label="Click a heart to reveal a reason"></div>
+          </div>
+
+          <p class="jar-hint">Tap a 💗 to reveal a reason</p>
+        </div>
+
+        <!-- Right panel: Title + progress + revealed cards -->
+        <div class="reasons-right">
+          <h2 class="reasons-title">10 Reasons<br/><span>Why I Love You</span></h2>
+
+          <!-- Progress bar -->
+          <div class="reasons-progress-wrap" aria-label="Progress">
+            <div class="reasons-progress-bar-bg">
+              <div class="reasons-progress-bar-fill" style="width:0%"></div>
+            </div>
+            <span class="reasons-progress-text">0 / 10</span>
+          </div>
+
+          <!-- Revealed reason cards -->
+          <div class="reasons-cards" aria-live="polite" aria-label="Revealed reasons"></div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ╔══════════════════════════════════════════════╗ -->
     <!-- ║  SCENE 6 — HUB B (Second Hub)               ║ -->
     <!-- ╚══════════════════════════════════════════════╝ -->
     <section id="s-hub-b" class="scene" aria-label="Click on items to open - second hub">
