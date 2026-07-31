@@ -92,6 +92,10 @@ function showScene(id, direction = 'forward') {
   next.style.transform  = 'translateX(0)';
   next.style.opacity    = '1';
 
+  if (id === 's-music' && !isPlaying) {
+    startMusic();
+  }
+
   setTimeout(() => {
     prev.classList.remove('active', 'exit-left', 'exit-right');
     prev.style.transform = '';
@@ -363,7 +367,6 @@ function initWrongScreen() {
    ────────────────────────────────────────────────────────── */
 function initSurpriseScreen() {
   document.getElementById('surprise-btn').addEventListener('click', () => {
-    startMusic(); // Start background music when they open the gift
     showScene('s-hub-a', 'forward');
   });
 }

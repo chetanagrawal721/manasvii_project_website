@@ -500,8 +500,8 @@
 
 .bouquet-polaroid-group {
   position: relative;
-  width: 250px;
-  height: 350px;
+  width: 320px;
+  height: 400px;
 }
 
 .bouquet-illustration {
@@ -515,15 +515,21 @@
 .overlap-polaroid {
   position: absolute !important;
   bottom: 0;
-  right: -30px;
+  right: 0;
   z-index: 2;
-  transform: rotate(5deg);
-  width: 140px;
-  height: 170px;
+  transform: rotate(4deg);
+  width: 280px;
+  height: 330px;
   background: white;
-  padding: 8px 8px 24px 8px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  padding: 12px 12px 36px 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
   border: 1px solid rgba(0,0,0,0.05);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.overlap-polaroid:hover {
+  transform: rotate(0deg) scale(1.03);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.22);
 }
 
 .overlap-polaroid .polaroid-img {
