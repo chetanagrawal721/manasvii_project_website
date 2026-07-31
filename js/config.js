@@ -102,7 +102,7 @@ const CONFIG = {
     presentedTo: "Manasvii",
     date: "July 31, 2025",
     certId: "GF-2025-♥-001",
-    signature: "With all my heart, Chetan",
+    signature: "With all my heart, Kapil",
     message: "For being the brightest part of my life, filling every ordinary day with extraordinary happiness, making every smile more meaningful, every moment unforgettable, and every dream worth chasing together.\n\nYour kindness, laughter, patience, support, and endless love make you the most beautiful person in my world.\n\nThank you for choosing me every single day.\n\nYou will always be my favorite hello and my hardest goodbye.",
     closingMessage: "No trophy, certificate, or award could ever truly express how much you mean to me. This is just a tiny reminder that, in my eyes, you’ll always be my favorite person and the greatest blessing in my life. ❤️",
     bottomQuote: "Every love story is beautiful, but ours is my favorite."
