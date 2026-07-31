@@ -363,6 +363,7 @@ function initWrongScreen() {
    ────────────────────────────────────────────────────────── */
 function initSurpriseScreen() {
   document.getElementById('surprise-btn').addEventListener('click', () => {
+    startMusic(); // Start background music when they open the gift
     showScene('s-hub-a', 'forward');
   });
 }
@@ -589,11 +590,9 @@ function initMusicPlayer() {
 
   // Navigation
   document.getElementById('music-back')?.addEventListener('click', () => {
-    pauseMusic();
     showScene('s-hub-a', 'back');
   });
   document.getElementById('music-next')?.addEventListener('click', () => {
-    pauseMusic();
     showScene('s-photos', 'forward');
   });
 }
