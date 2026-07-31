@@ -407,17 +407,8 @@ function bindHubItem(btnId, targetScene) {
    LOVE LETTER — CONFIG-DRIVEN TYPING EFFECT
    ────────────────────────────────────────────────────────── */
 function renderLetter() {
-  const sealContainer = document.getElementById('letter-seal-container');
-  const btn = document.getElementById('wax-seal-btn');
-
-  if (btn && sealContainer) {
-    btn.addEventListener('click', () => {
-      sealContainer.style.opacity = '0';
-      setTimeout(() => {
-        sealContainer.style.display = 'none';
-        typeLetterText();
-      }, 500);
-    });
+  if (!letterTyped) {
+    setTimeout(typeLetterText, 500);
   }
 
   // Inject letterPhoto into the Polaroid on the love letter page
@@ -449,7 +440,12 @@ function typeLetterText() {
 
   let currentParaIndex = 0;
   let currentCharIndex = 0;
-  const textLines = CONFIG.letterText;
+  
+  // Ensure textLines is an array of strings
+  let textLines = CONFIG.letterText;
+  if (typeof textLines === 'string') {
+    textLines = textLines.split('\n');
+  }
 
   function typeNext() {
     if (currentParaIndex >= textLines.length) {
@@ -757,27 +753,36 @@ function stopLyrics() {
 }
 
 /* ──────────────────────────────────────────────────────────
-   PHOTO GALLERY — CONFIG-DRIVEN WITH SVG ILLUSTRATION FALLBACKS
+   PHOTO GALLERY (Scrapbook)
    ────────────────────────────────────────────────────────── */
 function renderPhotos() {
-  const strip = document.getElementById('photo-strip');
-  if (!strip) return;
+  const board = document.getElementById('scrapbook-board');
+  if (!board) return;
 
-  strip.innerHTML = '';
+  board.innerHTML = '';
 
   CONFIG.photos.forEach((photo, i) => {
     const frame = document.createElement('div');
-    frame.className = 'photo-frame';
+    const frameClass = photo.frameType ? `frame-${photo.frameType}` : 'frame-polaroid';
+    frame.className = `scrapbook-photo ${frameClass}`;
+    
+    // Slight random rotation if not provided
+    const rotation = photo.rotation || (Math.random() * 10 - 5);
+    frame.style.transform = `rotate(${rotation}deg)`;
+    frame.style.animationDelay = `${i * 0.15}s`;
+
+    // Add Washi tape
+    const tape = document.createElement('div');
+    tape.className = 'washi-tape';
+    frame.appendChild(tape);
 
     if (photo.src && photo.src !== '') {
       const img = document.createElement('img');
       img.src = photo.src;
       img.alt = photo.alt || `Memory ${i + 1}`;
       img.loading = 'lazy';
-      img.style.cssText = 'width:100%;height:140px;object-fit:cover;display:block;border-radius:4px;';
 
       img.onerror = () => {
-        // Replace broken image with SVG fallback illustration
         frame.removeChild(img);
         const fallbackContainer = document.createElement('div');
         fallbackContainer.innerHTML = FALLBACK_ILLUSTRATIONS[i % FALLBACK_ILLUSTRATIONS.length];
@@ -786,14 +791,53 @@ function renderPhotos() {
 
       frame.appendChild(img);
     } else {
-      // No src — use illustration directly
       const fallbackContainer = document.createElement('div');
       fallbackContainer.innerHTML = FALLBACK_ILLUSTRATIONS[i % FALLBACK_ILLUSTRATIONS.length];
       frame.appendChild(fallbackContainer.firstChild);
     }
 
-    strip.appendChild(frame);
+    // Add short caption to polaroids
+    if (frameClass === 'frame-polaroid') {
+      const cap = document.createElement('div');
+      cap.className = 'scrapbook-caption-preview';
+      cap.textContent = photo.caption || '';
+      frame.appendChild(cap);
+    }
+
+    // Click interaction for modal
+    frame.addEventListener('click', () => {
+      openMemoryModal(photo);
+    });
+
+    board.appendChild(frame);
   });
+}
+
+function openMemoryModal(photo) {
+  const modal = document.getElementById('memory-modal');
+  const imgEl = document.getElementById('memory-modal-img');
+  const dateEl = document.getElementById('memory-modal-date');
+  const captionEl = document.getElementById('memory-modal-caption');
+  const noteEl = document.getElementById('memory-modal-note');
+
+  if (!modal) return;
+
+  imgEl.src = photo.src || '';
+  dateEl.textContent = photo.date || '';
+  captionEl.textContent = photo.caption || '';
+  noteEl.textContent = photo.note || '';
+  
+  // hide date if empty
+  dateEl.style.display = photo.date ? 'block' : 'none';
+
+  modal.classList.add('open');
+}
+
+function closeMemoryModal() {
+  const modal = document.getElementById('memory-modal');
+  if (modal) {
+    modal.classList.remove('open');
+  }
 }
 
 function initPhotosNav() {
@@ -803,23 +847,130 @@ function initPhotosNav() {
   document.getElementById('photos-next')?.addEventListener('click', () => {
     showScene('s-award', 'forward');
   });
+
+  // Modal close handlers
+  document.getElementById('memory-modal-close-btn')?.addEventListener('click', closeMemoryModal);
+  document.getElementById('memory-modal-close')?.addEventListener('click', closeMemoryModal);
 }
 
 /* ──────────────────────────────────────────────────────────
    AWARD SCENE — CONFIG-DRIVEN RENDERING
    ────────────────────────────────────────────────────────── */
 function renderAward() {
-  const nameEl = document.getElementById('award-name');
-  const msgEl  = document.getElementById('award-message');
-  if (nameEl) nameEl.textContent = CONFIG.recipientName;
-  if (msgEl)  msgEl.textContent  = CONFIG.awardMessage;
+  const aw = CONFIG.award || {};
+  
+  const els = {
+    title: document.getElementById('cert-title'),
+    subtitle: document.getElementById('cert-subtitle'),
+    name: document.getElementById('cert-name'),
+    date: document.getElementById('cert-date'),
+    id: document.getElementById('cert-id'),
+    sig: document.getElementById('cert-sig'),
+    message: document.getElementById('cert-message'),
+    quote: document.getElementById('award-quote-text'),
+    closingText: document.getElementById('award-closing-text')
+  };
+
+  if (els.title) els.title.textContent = aw.title || "BEST GIRLFRIEND IN THE WORLD";
+  if (els.subtitle) els.subtitle.textContent = aw.subtitle || "Official Certificate of Love";
+  if (els.name) els.name.textContent = aw.presentedTo || CONFIG.recipientName;
+  if (els.date) els.date.textContent = aw.date || new Date().toLocaleDateString();
+  if (els.id) els.id.textContent = aw.certId || "GF-001";
+  if (els.sig) els.sig.textContent = aw.signature || "With all my heart";
+  if (els.message) els.message.textContent = aw.message || CONFIG.awardMessage;
+  if (els.quote) els.quote.textContent = aw.bottomQuote || "Every love story is beautiful...";
+  if (els.closingText) els.closingText.textContent = aw.closingMessage || "You mean the world to me.";
 }
 
 function initAwardNav() {
-  document.getElementById('award-back')?.addEventListener('click', () =>
-    showScene('s-hub-a', 'back'));
-  document.getElementById('award-next')?.addEventListener('click', () =>
-    showScene('s-end', 'forward'));
+  // Back
+  document.getElementById('award-back')?.addEventListener('click', () => {
+    showScene('s-hub-a', 'back');
+  });
+
+  // Medal Click -> Confetti + Popup
+  const medal = document.getElementById('cert-medal');
+  const popup = document.getElementById('award-congrats-popup');
+  const popupClose = document.getElementById('congrats-close');
+
+  medal?.addEventListener('click', () => {
+    fireConfetti();
+    popup?.classList.add('visible');
+  });
+
+  popupClose?.addEventListener('click', () => {
+    popup?.classList.remove('visible');
+  });
+
+  // Next (Read Final Message)
+  const nextBtn = document.getElementById('award-next');
+  const closingMsg = document.getElementById('award-closing-msg');
+  
+  let finalMessageShown = false;
+
+  nextBtn?.addEventListener('click', () => {
+    if (!finalMessageShown) {
+      finalMessageShown = true;
+      nextBtn.innerHTML = "Finish Experience ✨";
+      closingMsg?.classList.add('visible');
+      // scroll to bottom
+      const scrollArea = document.querySelector('.award-scroll-area');
+      if (scrollArea) {
+        setTimeout(() => {
+          scrollArea.scrollTo({ top: scrollArea.scrollHeight, behavior: 'smooth' });
+        }, 100);
+      }
+    } else {
+      showScene('s-end', 'forward');
+    }
+  });
+}
+
+function fireConfetti() {
+  const canvas = document.getElementById('award-confetti-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  // Set dimensions dynamically based on parent container
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+  
+  const pieces = [];
+  const colors = ['#E8C547', '#E8728A', '#F2A6C4', '#FFF9C4', '#FFB3C6'];
+  for (let i = 0; i < 150; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height, // start above
+      vx: (Math.random() - 0.5) * 6,
+      vy: Math.random() * 5 + 3,
+      size: Math.random() * 8 + 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rot: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 10
+    });
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let active = false;
+    pieces.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.rotSpeed;
+      if (p.y < canvas.height) active = true;
+      
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+      ctx.restore();
+    });
+    if (active) requestAnimationFrame(animate);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  animate();
 }
 
 /* ──────────────────────────────────────────────────────────
